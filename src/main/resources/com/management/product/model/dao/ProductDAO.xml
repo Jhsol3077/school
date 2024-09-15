@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.management.product.model.dao.ProductDAO">
+
+    <!-- 2. ProductDTO type의 resultMap을 설정하세요. -->
+    <resultMap id="productResultMap" type="com.management.product.model.dto.ProductDTO">
+        <id column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="product_type" property="productType" />
+        <result column="release_date" property="releaseDate" />
+        <result column="is_sale" property="isSale" />
+        <result column="price" property="price" />
+    </resultMap>
+
+    <!-- 3. 전체 목록을 조회하는 쿼리를 작성하세요. -->
+    <select id="selectAllProductList" resultMap="productResultMap">
+        SELECT * FROM product
+    </select>
+
+    <!-- 4. 조건에 따른 목록을 조회하는 쿼리를 작성하세요. -->
+    <select id="selectProductByName" parameterType="String" resultMap="productResultMap">
+        SELECT * FROM product WHERE product_name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <select id="selectNewProduct" resultMap="productResultMap">
+        SELECT * FROM product WHERE MONTH(release_date) = MONTH(NOW()) AND YEAR(release_date) = YEAR(NOW())
+    </select>
+
+    <select id="selectProductByNotSale" resultMap="productResultMap">
+        SELECT * FROM product WHERE is_sale = 'N'
+    </select>
+
+    <!-- 5. 제품 정보를 등록하는 쿼리를 작성하세요. -->
+    <insert id="insertProduct" parameterType="com.management.product.model.dto.ProductDTO">
+        INSERT INTO product (product_name, product_type, release_date, is_sale, price)
+        VALUES (#{productName}, #{productType}, #{releaseDate}, #{isSale}, #{price})
+    </insert>
+
+    <!-- 6. 제품 정보를 수정하는 쿼리를 작성하세요. -->
+    <update id="updateProduct" parameterType="com.management.product.model.dto.ProductDTO">
+        UPDATE product
+        SET product_name = #{productName},
+            product_type = #{productType},
+            release_date = #{releaseDate},
+            is_sale = #{isSale},
+            price = #{price}
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 7. 제품 정보를 삭제하는 쿼리를 작성하세요. -->
+    <delete id="deleteProduct" parameterType="int">
+        DELETE FROM product WHERE product_id = #{productId}
+    </delete>
+
+</mapper>
